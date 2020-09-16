@@ -1,0 +1,35 @@
+Strategy:
+
+Bookshelves wrapper structure that contains bookshelf, and some attributes that can be used in the future for
+extend the implementation
+
+The bookshelf implementation involves:
+- list of Uri(URI of items)
+- nreader field: number of readings of the objects in the bookshelf
+- self field: univocal identification of the current library among those connected
+- name: name of the bookshelf (not necessarily unique)
+
+Use the URI of articles:
+* Advantages:
+	- I avoid having a copy of an object
+	- easy management of the item update - (implicitly takes place)
+	- memory occupied
+	- fewer packages sent
+	- easy item search in the DB
+
+* Disadvantages:
+	- I can't see the content of the item / articles right away from the shelf but I need a second query to the server.
+
+I predicted the bookshelf population with item from the moment of creation recorded.
+This method helps you avoid contacting the server twice. With a single request I create and fill.
+The methods provided by the Java class does not allow this use.
+
+Server Side:
+
+I have used ConcurrentHash Map is designed for competition and improves performance 
+when multiple threads insert data on the map.
+Id of bookshelf are unique.
+I have provided other methods for managing bookshelfs.
+
+
+
