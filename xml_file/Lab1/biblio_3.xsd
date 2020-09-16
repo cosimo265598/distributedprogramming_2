@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	    targetNamespace="http://pad.polito.it/dp2/biblio"
+	    xmlns:tns="http://pad.polito.it/dp2/biblio"
+>
+    
+    <element name="biblio">
+		<complexType>
+			<sequence>
+				<element name="article" type="tns:ArticleType" maxOccurs="unbounded" minOccurs="0">				</element>
+				<element name="book" type="tns:BookType" maxOccurs="unbounded" minOccurs="0">				</element>
+				<element name="journal" type="tns:JournalType" maxOccurs="unbounded" minOccurs="0">
+					<unique name="issueUniqueness">
+						<selector xpath="issue" />
+						<field xpath="@year" />
+						<field xpath="@number" />
+					</unique>	
+				</element>
+				
+				<element name="bookchapter" type="tns:new_chapterType2" minOccurs="0" maxOccurs="unbounded"/>
+				
+			</sequence>
+		</complexType>
+		<key name="journalKey">
+			<selector xpath="journal" />
+			<field xpath="@ISSN" />
+		</key>
+		<keyref name="journalReference" refer="tns:journalKey">
+			<selector xpath="article" />
+			<field xpath="@journal" />
+		</keyref>
+		<key name="issueKey">
+			<selector xpath="journal/issue" />
+			<field xpath="@id"/>
+		</key>
+		<keyref name="issueReference" refer="tns:issueKey">
+			<selector xpath="article" />
+			<field xpath="@issue" />
+		</keyref>
+		<key name="itemKey_moredirection">
+			<selector xpath="article | book"/>   <!-- Operator union for xpath -->
+			<field xpath="@id"/>
+		</key>
+		<keyref name="Reference" refer="tns:itemKey_moredirection">
+			<selector xpath="article/citedBy | book/citedBy" />
+			<field xpath="." />
+		</keyref>
+		<unique name="bookUniqueness">
+			<selector xpath="book" />
+			<field xpath="@ISBN" />
+		</unique>
+		<!-- PUNTO 1 ESERCIZIO 3 -->
+		<unique name="journalTitle">
+			<selector xpath="journal"/>
+			<field xpath="title"></field>
+		</unique>
+		<!-- AGGIUNTA RISPETTO ALLA VERSIONE PRECEDNTE -->		
+		<keyref name="isbnToKey" refer="tns:bookUniqueness">  <!-- Posso puntare direttamente BookUniqueness -->
+			<selector xpath="bookchapter"/>
+			<field xpath="@chapterOnBook"/>
+		</keyref>
+		
+		<unique name="uniqueChapter1">
+			<selector xpath="bookchapter"></selector>
+			<field xpath="@chapterOnBook"></field>
+			<field xpath="@num_cap"></field>
+		</unique>
+		
+		<unique name="uniqueChapter2">
+			<selector xpath="bookchapter"></selector>
+			<field xpath="@chapterOnBook"></field>
+			<field xpath="title"></field>
+		</unique>
+		
+
+
+	</element>
+
+	<complexType name="BiblioItemType">
+		<sequence>
+			<element name="author" type="string" maxOccurs="unbounded" minOccurs="1"/>
+			<element name="title" type="string"/>
+			<element name="subtitle" type="string" minOccurs="0"/>
+			<element name="citedBy" type="integer" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute name="id" type="integer"/>
+	</complexType>
+	
+	<complexType name="chapterType">
+		<sequence>
+			<element name="titleChapter" type="string" />
+		</sequence>
+			<attribute name="chapterOnBook" type="tns:ISBNCode" use="required" />
+			<attribute name="num_cap" type="positiveInteger" use="required" />
+	</complexType>
+	
+	<complexType name="new_chapterType">
+		<complexContent>
+			<extension base="tns:BiblioItemType">
+				<attribute name="chapterOnBook" type="tns:ISBNCode" use="required" />
+				<attribute name="num_cap" type="positiveInteger" use="required" />
+			</extension>
+			
+		</complexContent>
+	</complexType>
+	<complexType name="new_chapterType2">
+		<complexContent>
+			<restriction base="tns:new_chapterType">
+					<sequence>
+						<element name="author" type="string" maxOccurs="unbounded" minOccurs="1"/>
+						<element name="title" type="string"/>
+					</sequence>
+				<attribute name="chapterOnBook" type="tns:ISBNCode" use="required" />
+				<attribute name="num_cap" type="positiveInteger" use="required" />
+			</restriction>
+			
+		</complexContent>
+	</complexType>
+	
+	
+	<complexType name="ArticleType">
+	<complexContent>
+		<extension base="tns:BiblioItemType">     <!-- Estenzione di un tipo base complesso itemBiblio -->
+			<attribute name="journal" type="tns:ISSNCode" use="required"/>
+			<attribute name="issue" type="integer" use="required"/>
+		</extension>
+	</complexContent>
+		
+	</complexType>
+	
+	<complexType name="BookType">
+		<complexContent>
+			<extension base="tns:BiblioItemType">
+				<sequence>
+					<element name="publisher" type="string"/>
+				</sequence>
+				<attribute name="ISBN" type="tns:ISBNCode" use="required"/>
+				<attribute name="year" type="gYear" use="required"/>
+			</extension>		
+		</complexContent>
+	</complexType>
+	
+	<complexType name="JournalType">
+		<sequence>
+			<element name="title" type="string"></element>
+			<element name="publisher" type="string"></element>
+			<element name="issue" maxOccurs="unbounded" minOccurs="0">
+				<complexType>
+					<attribute name="id" type="integer" use="required"/>
+					<attribute name="year" type="gYear" use="required"/>
+					<attribute name="number" type="positiveInteger" use="required"/>					
+				</complexType>
+			</element>
+		</sequence>
+		<attribute name="ISSN" type="tns:ISSNCode" use="required"/>
+	</complexType>
+		
+	<!-- ISBN code is a 10 or 13 digit code. If it is 10 digits long the last digit may be a X -->  
+	<simpleType name="ISBNCode"> 
+	  <restriction base="string"> 
+	   <pattern value="[0-9]{13}"/>
+	   <pattern value="[0-9]{9}([0-9]|X)"/>
+	  </restriction> 
+	</simpleType>
+	
+	<!-- ISSN code is a 8 digit code with a dash dividing the two groups
+	     of 4 digits and the last digit may be a X -->  
+	<simpleType name="ISSNCode"> 
+	  <restriction base="string"> 
+	   <pattern value="[0-9]{4}-[0-9]{3}([0-9]|X)"/>
+	  </restriction> 
+	</simpleType>
+</schema>

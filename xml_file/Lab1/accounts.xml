@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<MultiAccountBank xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance" 
+    xsd:noNamespaceSchemaLocation="accounts.xsd">
+
+<account number="123456">
+  <holder name="Elia" address="Via dei Pioppi, 21" fiscalID="MNSCSM94L13E205Y" />
+  <holder name="Francesco" address="Via dei Pioppi, 20" fiscalID="PNSCSM94L13E205Y" />
+    <yearOperations year="1999"> 
+  	<operation date="1999-12-12" amount="10">
+  		<description>Prova acquisto</description>
+  	</operation>
+  </yearOperations>
+  <yearOperations year="2000"> 
+  	<operation date="1999-12-12" amount="10">
+  		<description>Prova acquisto</description>
+  	</operation>
+  </yearOperations>
+</account>
+
+
+<account number="123457"> 
+  <holder name="Francesco" address="Via dei Pioppi, 20" fiscalID="MNSCSM94L13E205Y" />
+    <yearOperations year="1999"> 
+  	<operation date="1999-12-12" amount="10">
+  		<description>Prova acquisto</description>
+  	</operation>
+  </yearOperations>
+  <yearOperations year="2000"> 
+  	<operation date="1999-12-12" amount="10">
+  		<description>Prova acquisto</description>
+  	</operation>
+  </yearOperations>
+</account>
+
+
+<account number="123458">
+  <holder name="Umberto" address="Via dei Pioppi, 20" fiscalID="MNSCSM94L13E205Y" />
+  <yearOperations year="1999"> 
+  	<operation date="1999-12-12" amount="10">
+  		<description>Prova acquisto</description>
+  	</operation>
+  </yearOperations>
+  <yearOperations year="2000"> 
+  	<operation date="1999-12-12" amount="10">
+  		<description>Prova acquisto</description>
+  	</operation>
+  </yearOperations>
+</account>
+
+
+</MultiAccountBank>
